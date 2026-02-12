@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Teacher Dashboard - Quiz App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>👨‍🏫 Teacher Dashboard</h2>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('main.create_quiz') }}" class="btn btn-primary btn-lg">
+            ➕ Create New Quiz
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    {% if quizzes|length > 0 %}
+        {% for quiz in quizzes %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ quiz.title }}</h5>
+                    <p class="card-text">{{ quiz.description[:100] }}{% if quiz.description|length > 100 %}...{% endif %}</p>
+                    <small class="text-muted">Created: {{ quiz.created_at.strftime('%Y-%m-%d %H:%M') }}</small><br>
+                    <small class="text-muted">Questions: {{ quiz.questions|length }}</small>
+                    <div class="mt-3">
+                        <a href="{{ url_for('main.edit_quiz', quiz_id=quiz.id) }}" class="btn btn-sm btn-primary">Edit</a>
+                        <button class="btn btn-sm btn-secondary" disabled>View Results</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            No quizzes created yet. <a href="{{ url_for('main.create_quiz') }}">Create your first quiz</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

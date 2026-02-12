@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Result - Quiz App{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card text-center">
+            <div class="card-body p-5">
+                <h2 class="card-title mb-4">🎉 Quiz Completed!</h2>
+                
+                <div class="alert alert-success mb-4">
+                    <h4>Your Score: {{ result.score }} / {{ result.total_questions }}</h4>
+                    <h5>Percentage: {{ "%.2f"|format(result.percentage) }}%</h5>
+                </div>
+                
+                <div class="progress mb-4" style="height: 30px;">
+                    <div class="progress-bar bg-{% if result.percentage >= 80 %}success{% elif result.percentage >= 60 %}warning{% else %}danger{% endif %}" 
+                         role="progressbar" 
+                         style="width: {{ result.percentage }}%;" 
+                         aria-valuenow="{{ result.percentage }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                        {{ "%.1f"|format(result.percentage) }}%
+                    </div>
+                </div>
+                
+                <p class="text-muted">Submitted: {{ result.submitted_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                
+                <h5 class="mt-5 mb-3">Answer Review</h5>
+                <div class="text-start">
+                    {% for answer in result.answers %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6>Question {{ loop.index }}: {{ answer.question.question_text }}</h6>
+                            <p>
+                                <strong>Your Answer:</strong> 
+                                {% if answer.selected_answer %}
+                                    {{ answer.selected_answer|upper }}) 
+                                    {% if answer.selected_answer|lower == 'a' %}{{ answer.question.option_a }}
+                                    {% elif answer.selected_answer|lower == 'b' %}{{ answer.question.option_b }}
+                                    {% elif answer.selected_answer|lower == 'c' %}{{ answer.question.option_c }}
+                                    {% elif answer.selected_answer|lower == 'd' %}{{ answer.question.option_d }}{% endif %}
+                                {% else %}
+                                    <span class="text-warning">Not answered</span>
+                                {% endif %}
+                            </p>
+                            <p>
+                                <strong>Correct Answer:</strong> 
+                                {{ answer.question.correct_answer|upper }}) 
+                                {% if answer.question.correct_answer|lower == 'a' %}{{ answer.question.option_a }}
+                                {% elif answer.question.correct_answer|lower == 'b' %}{{ answer.question.option_b }}
+                                {% elif answer.question.correct_answer|lower == 'c' %}{{ answer.question.option_c }}
+                                {% elif answer.question.correct_answer|lower == 'd' %}{{ answer.question.option_d }}{% endif %}
+                            </p>
+                            <p>
+                                <strong>Status:</strong> 
+                                {% if answer.selected_answer and answer.selected_answer|lower == answer.question.correct_answer|lower %}
+                                    <span class="badge bg-success">✓ Correct</span>
+                                {% else %}
+                                    <span class="badge bg-danger">✗ Incorrect</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-4">
+                    <a href="{{ url_for('main.student_dashboard') }}" class="btn btn-primary btn-lg">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
